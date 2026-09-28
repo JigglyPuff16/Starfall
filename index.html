@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071225" />
+    <title>Starfall: Endless</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Starfall home">
+          <span class="brand-mark"><i></i><i></i><i></i></span>
+          <span>STARFALL <b>ENDLESS</b></span>
+        </a>
+
+        <div class="topbar-actions">
+          <div class="credit-chip" title="Stardust credits">
+            <span class="credit-icon">✦</span>
+            <span id="creditCount">0</span>
+            <small>STARDUST</small>
+          </div>
+          <button class="outline-button" id="hangarButton" type="button">
+            <span class="button-icon">◇</span> HANGAR
+          </button>
+        </div>
+      </header>
+
+      <section class="game-frame" aria-label="Starfall game arena">
+        <canvas id="gameCanvas" width="1280" height="720" aria-label="Space battle game"></canvas>
+
+        <div class="scanlines" aria-hidden="true"></div>
+
+        <div class="game-hud" aria-live="polite">
+          <div class="hud-column hud-left">
+            <div class="hud-label">CURRENT SECTOR</div>
+            <div class="sector-value"><span id="sectorNumber">01</span> <em id="sectorName">ORION VEIL</em></div>
+            <div class="enemy-readout"><span class="readout-dot"></span><span id="enemyReadout">SCANNING VOID</span></div>
+          </div>
+
+          <div class="hud-column hud-center">
+            <div class="threat-label" id="threatLabel">SECTOR 01</div>
+            <div class="threat-track"><div class="threat-fill" id="threatFill"></div></div>
+          </div>
+
+          <div class="hud-column hud-right">
+            <div class="integrity-header"><span>HULL INTEGRITY</span><b id="healthNumber">100%</b></div>
+            <div class="health-track"><div class="health-fill" id="healthFill"></div></div>
+            <div class="shield-line"><span>SHIELD</span><div class="shield-track"><div class="shield-fill" id="shieldFill"></div></div></div>
+          </div>
+        </div>
+
+        <div class="status-toast" id="statusToast" aria-live="assertive"></div>
+
+        <section class="intro-panel" id="introPanel">
+          <div class="eyebrow">// LONG-RANGE TRANSMISSION</div>
+          <h1>THE VOID<br /><span>IS HUNGRY.</span></h1>
+          <p>Push through an endless invasion. Salvage stardust, build your fleet, and survive the next sector.</p>
+          <button class="launch-button" id="launchButton" type="button">LAUNCH MISSION <span>→</span></button>
+          <div class="intro-tip"><kbd>WASD</kbd><span>or</span><kbd>ARROWS</kbd> TO FLY <i></i> <kbd>SPACE</kbd> TO FIRE</div>
+        </section>
+
+        <section class="pause-panel hidden" id="pausePanel">
+          <div class="eyebrow">// FLIGHT SYSTEMS PAUSED</div>
+          <h2>HOLD POSITION</h2>
+          <p>Press <kbd>P</kbd> or use the button below when you're ready.</p>
+          <button class="launch-button compact" id="resumeButton" type="button">RESUME <span>→</span></button>
+        </section>
+
+        <section class="gameover-panel hidden" id="gameoverPanel">
+          <div class="eyebrow danger">// SIGNAL LOST</div>
+          <h2>SHIP DESTROYED</h2>
+          <p>You reached <strong id="gameoverSector">sector 01</strong> and recovered <strong id="gameoverCredits">0 stardust</strong>.</p>
+          <button class="launch-button" id="restartButton" type="button">FLY AGAIN <span>↻</span></button>
+        </section>
+
+        <button class="pause-button hidden" id="pauseButton" type="button" aria-label="Pause game">Ⅱ</button>
+      </section>
+
+      <section class="mission-deck">
+        <article class="ship-card">
+          <div class="card-corner"></div>
+          <div class="card-kicker">ACTIVE INTERCEPTOR</div>
+          <div class="ship-card-line">
+            <span class="mini-ship" aria-hidden="true"></span>
+            <div><h2 id="activeShipName">LANCER</h2><p id="activeShipDescription">Balanced reconnaissance craft</p></div>
+          </div>
+          <button class="text-button" id="changeShipButton" type="button">MANAGE FLEET <span>→</span></button>
+        </article>
+
+        <article class="mission-card">
+          <div>
+            <div class="card-kicker">MISSION PROTOCOL</div>
+            <h2>ENDLESS <span>SECTORS</span></h2>
+            <p>Clear every hostile. Every fifth sector wakes a sector boss. Threats never stop evolving.</p>
+          </div>
+          <div class="protocol-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+        </article>
+
+        <article class="control-card">
+          <div class="card-kicker">FLIGHT CONTROLS</div>
+          <div class="controls-grid">
+            <span><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd><small>THRUST</small></span>
+            <span><kbd>SPACE</kbd><small>LASERS</small></span>
+            <span><kbd>P</kbd><small>PAUSE</small></span>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <div class="modal-backdrop hidden" id="hangarModal" role="dialog" aria-modal="true" aria-labelledby="hangarTitle">
+      <section class="hangar-modal">
+        <header class="modal-header">
+          <div>
+            <div class="eyebrow">// FLEET MANAGEMENT</div>
+            <h2 id="hangarTitle">ORBITAL HANGAR</h2>
+          </div>
+          <button class="close-button" id="closeHangarButton" type="button" aria-label="Close hangar">×</button>
+        </header>
+
+        <div class="hangar-balance"><span>AVAILABLE STARDUST</span><b><i>✦</i> <span id="hangarCredits">0</span></b></div>
+
+        <div class="hangar-scroll">
+          <section>
+            <div class="section-heading"><span>01</span><h3>STARSHIP BAY</h3><p>Buy a hull, then make it yours.</p></div>
+            <div class="ship-grid" id="shipGrid"></div>
+          </section>
+
+          <section class="upgrade-section">
+            <div class="section-heading"><span>02</span><h3>LOADOUT LAB</h3><p>Upgrade the currently selected interceptor.</p></div>
+            <div class="upgrade-grid" id="upgradeGrid"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
